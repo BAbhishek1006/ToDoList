@@ -1,0 +1,72 @@
+// index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo List App</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            max-width: 500px; 
+            margin: auto; 
+            padding: 20px; 
+        }
+        .todo-item { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 10px 0; 
+        }
+        .completed { text-decoration: line-through; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>📝 Todo List</h1>
+        <input type="text" id="todoInput" placeholder="Enter a new task">
+        <button onclick="addTodo()">Add Task</button>
+        <div id="todoList"></div>
+    </div>
+
+    <script>
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = todos.map((todo, index) => `
+                <div class="todo-item">
+                    <span class="${todo.completed ? 'completed' : ''}" 
+                        onclick="toggleTodo(${index})">
+                        ${todo.text}
+                    </span>
+                    <button onclick="deleteTodo(${index})">❌</button>
+                </div>
+            `).join('');
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            if (input.value.trim()) {
+                todos.push({ 
+                    text: input.value, 
+                    completed: false 
+                });
+                input.value = '';
+                renderTodos();
+            }
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            renderTodos();
+        }
+
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            renderTodos();
+        }
+
+        renderTodos();
+    </script>
+</body>
+</html>
